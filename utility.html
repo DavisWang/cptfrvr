@@ -1,0 +1,352 @@
+<html>
+<head>
+<title>Cpt. Forever - Ship Building Utility</title>
+</head>
+<style>
+   td{border:1px solid black; cursor:hand; text-align:center;}
+</style>
+<script Language="JavaScript">
+   var ship_bit_code = '11111110000001000000110';
+   
+   function drawgrid()
+   {
+      
+      var ghtm = '<table border=0>';
+      for (y = 49; y < 79; y++)
+         {
+         ghtm += '<tr>';
+         for (x = 44; x < 84; x++)
+            {
+            ghtm += '<td id=x' + x + 'y' + y + ' onClick=build(' + x + ',' + y + ');>&nbsp;&nbsp;&nbsp;</td>';
+            }
+         ghtm += '</tr>';
+         }
+      ghtm += '</table>';
+      grid.innerHTML = ghtm;
+      
+      x64y64.innerHTML = '<font color=red style=background-color:red;><b>@</b></font>';
+   }
+   
+   function build(xc, yc)
+   {
+      var type_code = module.value.substring(module.value.length - 7, module.value.length);
+      
+      ship_bit_code += type_code + d2b(xc) + d2b(yc) + attach.value;
+      if(module.value.substring(0,1) == 'g')
+         {
+            if(attach.value == '01')
+               for (i = 1; i <= module.value.substring(1,2); i++)
+                  {
+                     var oE = document.getElementById('x' + (xc+i-1) + 'y' + yc);
+                     oE.innerHTML = '<font color=blue style=background-color:blue;><b>@</b></font>';
+                  }
+            if(attach.value == '11')
+               for (i = 1; i <= module.value.substring(1,2); i++)
+                  {
+                     var oE = document.getElementById('x' + (xc-i+1) + 'y' + yc);
+                     oE.innerHTML = '<font color=blue style=background-color:blue;><b>@</b></font>';
+                  }
+            if(attach.value == '00')
+               for (i = 1; i <= module.value.substring(1,2); i++)
+                  {
+                     var oE = document.getElementById('x' + xc + 'y' + (yc+i-1));
+                     oE.innerHTML = '<font color=blue style=background-color:blue;><b>@</b></font>';
+                  }
+            if(attach.value == '10')
+                  for (i = 1; i <= module.value.substring(1,2); i++)
+                  {
+                     var oE = document.getElementById('x' + xc + 'y' + (yc-i+1));
+                     oE.innerHTML = '<font color=blue style=background-color:blue;><b>@</b></font>';
+                  }
+         }
+            
+      if(module.value.substring(0,1) == 'l')
+         {
+            var oE = document.getElementById('x' + xc +'y' + yc);
+            if(attach.value == '01')
+               oE.innerHTML = '<font color=red><b>[=</b></font>';
+            if(attach.value == '11')
+               oE.innerHTML = '<font color=red><b>=]</b></font>';
+            if(attach.value == '00')
+               oE.innerHTML = '<font color=red><b>||</b></font>';
+            if(attach.value == '10')
+               oE.innerHTML = '<font color=red><b>||</b></font>';
+         }
+         
+      if(module.value.substring(0,1) == 'b')
+         {
+            var oE = document.getElementById('x' + xc +'y' + yc);
+            if(attach.value == '01')
+               oE.innerHTML = '<font color=black><b>&lt;</b></font>';
+            if(attach.value == '11')
+               oE.innerHTML = '<font color=black><b>&gt;</b></font>';
+            if(attach.value == '00')
+               oE.innerHTML = '<font color=black><b>/\\<b></font>';
+            if(attach.value == '10')
+               oE.innerHTML = '<font color=black><b>\\/</b></font>';
+         }
+   }
+   
+   function make_url_string()
+   {
+      var diff = 5 - (ship_bit_code.length % 5);
+      if (ship_bit_code.length % 5 > 0)
+         for (i = 1; i <= diff; i++)
+            ship_bit_code += '1'; 
+      var url_code = '';
+      var bc = '';
+      var t = '';
+      for (i = 0; i < ship_bit_code.length; i = i + 5)
+      {
+         bc = ship_bit_code.substring(i, i+5);
+         if (bc == '00000') t = 'b';
+         if (bc == '00001') t = 'w';
+         if (bc == '00010') t = 'l';
+         if (bc == '00011') t = 'g';
+         if (bc == '00100') t = 'p';
+         if (bc == '00101') t = 's';
+         if (bc == '00110') t = '0';
+         if (bc == '00111') t = 'c';
+         if (bc == '01000') t = '2';
+         if (bc == '01001') t = '5';
+         if (bc == '01010') t = 'j';
+         if (bc == '01011') t = 'e';
+         if (bc == '01100') t = '3';
+         if (bc == '01101') t = 'i';
+         if (bc == '01110') t = 'y';
+         if (bc == '01111') t = 't';
+         if (bc == '10000') t = 'a';
+         if (bc == '10001') t = 'v';
+         if (bc == '10010') t = 'k';
+         if (bc == '10011') t = 'f';
+         if (bc == '10100') t = 'o';
+         if (bc == '10101') t = 'r';
+         if (bc == '10110') t = 'z';
+         if (bc == '10111') t = 'u';
+         if (bc == '11000') t = 'q';
+         if (bc == '11001') t = '4';
+         if (bc == '11010') t = '1';
+         if (bc == '11011') t = 'd';
+         if (bc == '11100') t = 'm';
+         if (bc == '11101') t = 'h';
+         if (bc == '11110') t = 'x';
+         if (bc == '11111') t = 'n';
+         url_code += t;
+      }
+      urlc.innerHTML = 'http://www.captainforever.com/captainforever.php?cfe=' + url_code;
+      url_link.innerHTML = "<a href=http://www.captainforever.com/captainforever.php?cfe=" + url_code + ">Fly this ship</a>"
+   }
+   
+   function d2b(n)
+   {
+      var b = '';
+      if(n & 1) b+='1'; else b+='0';
+      if(n & 2) b+='1'; else b+='0';
+      if(n & 4) b+='1'; else b+='0';
+      if(n & 8) b+='1'; else b+='0';
+      if(n & 16) b+='1'; else b+='0';
+      if(n & 32) b+='1'; else b+='0';
+      if(n & 64) b+='1'; else b+='0';
+      
+      return b;
+   }
+</script>
+<body onload="drawgrid();">
+   <center><h2>Cpt. Forever - Ship Building Utility</h2>
+   By JBJ of the xkcd forums<br>
+   With extra special thanks to ttnarg for working out the URL encoding scheme
+   <table>
+   <tr>
+      <td><div id="grid"></div></td>
+      <td valign="top">Module Type
+         <select id="module">
+         <option selected>
+         <option value="">-----------PRISM LASERS--------
+         <option value="l0001000">Kilo  - 4 Hz /  6 MJ / 8 MJ
+         <option value="l0000010">Kilo  - 4 Hz  / 768 KJ / 1 MJ
+         <option value="l0000100">Kilo  - 2 Hz / 6 MJ / 4 MJ
+         <option value="l0001010">Kilo - 2Hz / 768 KJ /  512 KJ
+         <option value="l0000000">Kilo - 1Hz  / 49 MJ / 16 MJ
+         <option value="l0001100">Kilo - 1Hz / 6 MJ / 2MJ
+         <option value="l0000110">Juliet - 1Hz /  768 KJ / 256 KJ
+         <option value="l0001110">India - 4Hz / 96 KJ /  128 KJ
+         <option value="l0000001">Hotel - 2 Hz / 96 KJ / 64 KJ
+         <option value="l0001001">Golf  - 1Hz / 96 KJ /  32 KJ
+         <option value="l0000101">Foxtrot - 4Hz / 12 KJ / 16 KJ
+         <option value="l0001101">Echo - 2Hz / 12 KJ / 8 KJ
+         <option value="l0000011">Delta  - 1Hz / 12 KJ / 4000 J
+         <option value="l0001011">Charlie - 4Hz / 1500 J /  2000 J
+         <option value="l0000111">Bravo - 2Hz / 1500 J / 1000 J
+         <option value="l0001111">Alpha - 1Hz / 1500 J / 500 J
+         <option value="">-----------GIRDERS------------------
+         <option value="g60010000">x6 Kilo - 65 MJ
+         <option value="g50011000">x5 Kilo  - 32 MJ
+         <option value="g50010100">x5 Kilo - 16 MJ
+         <option value="g50011100">x5 Kilo  -  8 MJ 
+         <option value="g40010010">x4 Kilo - 4 MJ
+         <option value="g40011010">x4 Kilo - 2 MJ
+         <option value="g40010110">x4 Juliet - 1 MJ
+         <option value="g30011110">x3 India -  512 KJ
+         <option value="g30010001">x3 Hotel - 256 KJ
+         <option value="g30011001">x3 Golf - 128 KJ
+         <option value="g20010101">x2 Foxtrot - 64 KJ
+         <option value="g20011101">x2 Echo -  32 KJ
+         <option value="g20010011">x2 Delta - 16 KJ
+         <option value="g10011011">x1 Charlie  - 8000 J
+         <option value="g10010111">x1 Bravo - 4 KJ
+         <option value="g10011111">x1 Alpha - 2000 J
+         <option value = "">----------BOOSTERS-----------------
+         <option value="b0100000">Kilo -  32 MJ / 1.9 MN
+         <option value="b0101000">Kilo -  16 MJ / 1.8 MN
+         <option value="b0100100">Kilo -   8 MJ / 1.6 MN
+         <option value="b0101100">Kilo - 4 MJ / 1.5 MN
+         <option value="b0100010">Kilo -  2 MJ / 1.4 MN
+         <option value="b0101010"> Kilo - 1 MJ / 1.3 MN
+         <option value="b0100110">Juliet -  512 KJ / 1.2 MN
+         <option value="b0101110">India - 256 KJ / 1 MN
+         <option value="b0100001">Hotel -  128 KJ / 960 KN
+         <option value="b0101001">Golf  - 64 KJ / 840 KN
+         <option value="b0100101">Foxtrot -  32 KJ / 720 KN
+         <option value="b0101101">Echo - 16 KJ /  600KN
+         <option value="b0100011">Delta -  8 KJ / 480 KN
+         <option value="b0101011">Charlie - 4000 J / 360 KN
+         <option value="b0100111">Bravo -  2000J / 240 KN
+         <option value="b0101111">Alpha - 1000 J / 120 KN
+         <!--
+         <option value = "">----------COMMAND MODULES-----------------
+         <option value="0101111">Alpha Booster
+         <option value="0110000">Kilo CM
+         <option value="0110001">Hotel
+         <option value="0110010">Kilo
+         <option value="0110011">Delta
+         <option value="0110100">Kilo
+         <option value="0110101">foxtrot
+         <option value="0110110">Juliet
+         <option value="0110111">Bravo
+         <option value="0111000">Kilo Command Module
+         <option value="0111001">Golf
+         <option value="0111010">Kilo 
+         <option value="0111011">Charlie
+         <option value="0111100">Kilo CM
+         <option value="0111101">Echo CM
+         <option value="0111110">India CM
+         <option value="0111111">Alpha CM
+         -->
+         <option value = "">----------BLURST SHIELDS-----------------
+         <option value="g61000000">x6 Kilo
+         <option value="g51001000">x5 Kilo
+         <option value="g51000100">x5 Kilo
+         <option value="g51001100">x5 Kilo
+         <option value="g41000010">x4 Kilo
+         <option value="g41001010">x4 Kilo
+         <option value="g41000110">x4 Juliet
+         <option value="g31001110">x3 India
+         <option value="g31000001">x3 Hotel
+         <option value="g31001001">x3 Golf
+         <option value="g21000101">x2 Foxtrot
+         <option value="g21001101">x2 Echo
+         <option value="g21000011">x2 Delta
+         <option value="g11001011">x1 Charlie
+         <option value="g11000111">x1 Bravo
+         <option value="g11001111">x1 Alpha
+         <!--<option value = "">----------INFO BUOYS-----------------
+         <option value="l1010000">Info Buoy
+         <option value="1010001">
+         <option value="1010010">
+         <option value="1010011">
+         <option value="1010100">
+         <option value="1010101">
+         <option value="1010110">
+         <option value="1010111">Info Buoy
+         <option value="1011000">
+         <option value="1011001">
+         <option value="1011010">
+         <option value="1011011">
+         <option value="1011100">
+         <option value="1011101">
+         <option value="1011110">
+         <option value="1011111">Info buoy
+         -->
+         <option value = "">----------LASERS-----------------
+         <option value="l1101000">Kilo - 4 Hz / 2 MJ / 8MJ
+         <option value="l1100010">Kilo - 4 Hz / 256 KJ  / 1MJ
+         <option value="l1100100">Kilo - 2 Hz / 2 MJ / 4MJ
+         <option value="l1101010">Kilo - 2 Hz / 256 KJ / 512KJ
+         <option value="l1100000">Kilo -  1Hz / 16 MJ / 16 MJ
+         <option value="l1101100">Kilo - 1 Hz / 2 MJ / 2MJ
+         <option value="l1100110">Juliet - 1 Hz / 256 KJ / 256 KJ
+         <option value="l1101110">India - 4 Hz / 32 KJ / 128 KJ
+         <option value="l1100001">Hotel - 2Hz / 32 KJ / 64 KJ
+         <option value="l1101001">Golf - 1 Hz / 32 KJ / 32KJ
+         <option value="l1100101">Foxtrot - 4 Hz / 4,000J / 16KJ
+         <option value="l1101101">Echo - 2 Hz / 4000 J / 8000J
+         <option value="l1100011">Delta - 1 Hz / 4,000 J / 4,000 J
+         <option value="l1101011">Charlie - 4Hz / 500J / 2000J
+         <option value="l1100111">Bravo - 2 Hz / 500 J / 1000 J
+         <option value="l1101111">Alpha - 1 Hz / 500 J / 500J
+         <!--
+         <option value = "">----------CM ALPHAS-----------------
+         <option value="1110000">Command Module Alpha
+         <option value="1110001">
+         <option value="1110010">
+         <option value="1110011">
+         <option value="l1110100">Command Module Alpha
+         <option value="1110101">
+         <option value="1110110">
+         <option value="1110111">
+         <option value="1111000">
+         <option value="1111001">
+         <option value="1111010">
+         <option value="1111011">
+         <option value="1111100">
+         <option value="1111101">
+         <option value="1111110">Command Module Alpha
+         <option value="1111111">Command Module Alpha
+         -->
+         
+         
+         </select>
+         <p>
+         
+         Attachpoint of module
+         <select id="attach">
+         <option value="01">left
+         <option value="11">right
+         <option value="00">top
+         <option value="10">bottom
+         </select>
+         <p>
+         <button onClick="make_url_string();">Make URL</button>
+         <p>
+         <textarea id="urlc" cols=30 rows=10></textarea>
+         <span id="url_link"></span>
+         <p align="left">
+         To Use: <br>
+         The Command Module is the Red square in the center. To attach a module, select the module type from the drop down list.<br>
+         Then select the orientation of the attachment point. For instance, if you want to attach a girder to the right side of the command module,
+         the attachment point would be pointing to the left, so you would choose "Left". If you want to attach a laser that shoots straight ahead,
+         the attachment point would be on the bottom, so you could choose "Bottom". 
+         <p align="left">
+         Legend:<br>
+         Lasers (Prism and regular): CLASS - FIRING RATE / POWER / SHIELD<br>
+         Firing rate is measured in Hz. 1, 2, or 4 times per second.
+         Power is rated in Joules. Shielding also measured in Joules.<br>
+         Lasers will appear in red regardless of class and appear as: =], [=, or ||
+         <p align="left">
+         Girders (and Blurst Shields): LENGTH - CLASS - SHIELD<br>
+         Length is how many units long the girder is. All girders a 1 unit in width. The script will automatically fills out the girder to the 
+         appropriate length. Girders appear as blue blocks regardless of class.<br>
+         Shielding is measured in Joules and indicates how much damage the girder can take.<br>
+         Blurst shileds repel all incoming fire and seem to take no damage regardless of class. Shielding omitted from Blurst descriptions.
+         <p align="left">
+         Boosters: CLASS - SHIELD - THRUST<br>
+         Shielding like before is measured in Joules. Thrust is measured in Newtons.
+         <p align="left">
+         <b>There is no undo or delete. If you make a mistake, just refresh the page to reset.</b>
+         
+   </td>
+</tr>
+</table>
+</center>
+</body>
+</html>
